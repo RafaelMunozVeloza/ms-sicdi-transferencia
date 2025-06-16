@@ -1,0 +1,236 @@
+server:
+  port: 8182
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css,image/jpeg,image/png,image/x-icon,image/svg+xml
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
+
+docweb:
+  authMode: jdbc
+  ldap:
+    domain: EJC-CAIMI-NAL.MIL
+    connection: ldap://10.23.246.11/
+    path: DC=EJC-CAIMI-NAL,DC=MIL
+    user: CN=SGDI,OU=02. SERVICIOS,OU=SERVIDORES,DC=EJC-CAIMI-NAL,DC=MIL
+    pass: Colombia2024++
+  archivos:
+    root: /home/jpossop@EJC-CAIMI-NAL.MIL/OFS/orfeo1
+    jasper: ${docweb.archivos.root}/jasper
+    condiciones:
+      root: ${docweb.archivos.root}/condiciones
+    ofs:
+      root: ${docweb.archivos.root}/ofs
+    static:
+      plantillas: ${docweb.archivos.root}/plantillas
+      multimedia: ${docweb.archivos.root}/multimedia
+    drives:
+      root: ${docweb.archivos.root}/drives
+    images:
+      root: ${docweb.archivos.root}/images
+  expediente:
+    serie: 179
+  frame:
+    ancestors: http://localhost:4200
+
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = 10.23.228.150)(PORT = 1521))(CONNECT_DATA =(SERVER = DEDICATED)(SERVICE_NAME = RSISDOC)))
+    username: DOC
+    password: "***Sicdi2026+-*"
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: oracle.jdbc.OracleDriver
+    connection-timeout: 20000
+    idle-timeout: 300000
+    max-lifetime: 1200000
+    minimum-idle: 20
+    maximum-pool-size: 100
+    auto-commit: true
+    read-only: true
+    pool-name: SICDI-HikariPool
+    hikari:
+      connection-test-query: SELECT 1 FROM DUAL
+      initialization-fail-timeout: 10000
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
+        temp:
+          use_jdbc_metadata_defaults: false
+    hibernate:
+      connection:
+        provider_class: com.zaxxer.hikari.hibernate.HikariConnectionProvider
+    show-sql: false
+
+  messages:
+    basename: messages
+    cache-seconds: 3600
+    encoding: UTF-8
+
+  resources:
+    cache-period: 1800
+
+  activemq:
+    broker-url: tcp://127.0.0.1:61616?jms.xaAckMode=1
+    user: admin
+    password: admin
+
+  session:
+    store-type: none
+
+  data:
+    jdbc:
+      repositories:
+        enabled: false
+
+  freemarker:
+    template-loader-path: classpath:/templates
+    suffix: .ftl
+    cache: false
+
+  web:
+    resources:
+      static-locations: classpath:/static/
+
+  main:
+    allow-circular-references: true
+
+  profiles:
+    active: local
+
+logging:
+  level:
+    com.zaxxer.hikari.HikariConfig: OFF
+    root: INFO
+    org:
+      springframework:
+        web: INFO
+      hibernate: ERROR
+
+job:
+  cronminute: "0 0/1 * 1/1 * ?"
+  all_day_1205am: "5 * * * * ?"
+  reinicioSecuenciasRadicacion:
+    cron: "0 0 0 1 1 ?"
+
+co:
+  mil:
+    imi:
+      sicdi:
+        bandejas:
+          dias: 30
+        ofs:
+          convert:
+            home: C:\\ImageMagick-7.0.7-Q16\\
+        radicacion:
+          master: false
+        plantillas:
+          validar: true
+        owa:
+          url: "https://correo.imi.mil.co/ecp/?rfr=owa&owaparam=modurl%3D0&p=PersonalSettings/Password.aspx"
+        dominio:
+          default: 10
+
+com:
+  mil:
+    imi:
+      sicdi:
+        maxNumDepMultidestino: 4
+        minFilterSelectorYear: 2017
+        trd:
+          serie:
+            cargue: "54,155,281,292"
+          subseries:
+            actas:
+              usuario-1-1: "66"
+              usuario-0-0: "58"
+              transferencia: "59"
+        mail:
+          host: localhost
+          port: 25
+          username: notificacionesSICDI@imi.mil.com
+          password: abcd!234
+          prueba: true
+          expresionvalida: "^[A-Za-z0-9]+(.|_)+[A-Za-z0-9]+@+(?i)imi.mil.co$"
+        documento:
+          acta:
+            limite:
+              fecha-elaboracion:
+                dias: 2
+              fecha-plazo:
+                dias: 30
+          digital:
+            dias: 1
+        job:
+          notificacion:
+            plazo-vencido:
+              activo: true
+              dias-anticipacion: 1
+              cron: "0 0 6 * * *"
+        ofs:
+          key: Bpot3795Bar87q25
+        pdfviewer:
+          key: Dks9oMgo6t
+        wacom:
+          licence: "AgAkAEy2cKydAQVXYWNvbQ1TaWduYXR1cmUgU0RLAgKBAgJkAACIAwEDZQA"
+        linea:
+          mando:
+            inicio: "MDN-CGFM-COEJC-SECEJ"
+        timeout:
+          tiempo_espera: 30
+        dominio:
+          default: 10
+        owa:
+          url: https://correo.imi.mil.co/ecp/?rfr=owa&owaparam=modurl%3D0&p=PersonalSettings/Password.aspx
+
+mail:
+  transport:
+    protocol: smtp
+  smtp:
+    auth: false
+    starttls:
+      enable: false
+    ssl:
+      trust: false
+  debug: false
+
+infinispan:
+  client:
+    hotrod:
+      server_list: "127.0.0.1:11222"
+      use_auth: true
+      auth_username: app
+      auth_password: changem
+      marshaller: org.infinispan.commons.marshall.JavaSerializationMarshaller
+      java_serial_allowlist: com.laamware.ejercito.doc.web.serv.OFSEntry
+      max_retries: 1
+      connect_timeout: 200
+      socket_timeout: 500
+      connection_pool:
+        max_wait: 100
+  app:
+    cache:
+      default: SICDI
+
+javamelody:
+  enabled: true
+  excluded-datasources: secretSource,topSecretSource
+  spring-monitoring-enabled: true
+  init-parameters:
+    log: true
+    storage-directory: /tmp/javamelody
+
+migration:
+  redirect: true
+
+sicdi:
+  pfd:
+    owner: jhasjhkasdA##
+    enableLdap: true
